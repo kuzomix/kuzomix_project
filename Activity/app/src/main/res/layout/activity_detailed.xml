@@ -46,7 +46,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Name"
+        android:text="Time"
         android:layout_marginStart="10dp"
         android:textSize="16sp"
         android:id="@+id/detailTime"/>
