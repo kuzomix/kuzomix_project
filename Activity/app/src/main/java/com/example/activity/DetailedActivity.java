@@ -24,7 +24,7 @@ public class DetailedActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
         if (intent != null){
             String name = intent.getStringExtra("name");
-            String time = intent.getStringExtra("tima");
+            String time = intent.getStringExtra("time");
             int ingredients = intent.getIntExtra("ingredients", R.string.maggiIngredients);
             int desc = intent.getIntExtra("desc", R.string.maggieDesc);
             int image = intent.getIntExtra("image", R.drawable.maggi);
