@@ -15,7 +15,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/introBtn"
@@ -29,20 +29,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/introTitle"
-                android:textStyle="bold"
-                android:textSize="43sp"
+                android:textAlignment="center"
                 android:textColor="@color/darkblue"
-                android:textAlignment="center"/>
+                android:textSize="43sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/subIntro"
-                android:textColor="@color/darkblue"
-                android:textAlignment="center"
                 android:layout_marginTop="8dp"
-                android:textSize="16sp"/>
+                android:text="@string/subIntro"
+                android:textAlignment="center"
+                android:textColor="@color/darkblue"
+                android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
