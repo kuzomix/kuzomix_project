@@ -35,6 +35,7 @@ ActivityMainBinding binding;
     }
 
     private void initCategory() {
+
         DatabaseReference myRef=database.getReference("Category");
         binding.progressBarCategory.setVisibility(View.VISIBLE);
         ArrayList<Category> list=new ArrayList<>();
