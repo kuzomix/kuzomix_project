@@ -9,6 +9,8 @@ activity = "1.9.1"
 constraintlayout = "2.1.4"
 googleGmsGoogleServices = "4.4.2"
 firebaseAnalytics = "22.1.0"
+firebasePerf = "21.0.1"
+googleFirebaseFirebasePerf = "1.4.2"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -19,8 +21,10 @@ material = { group = "com.google.android.material", name = "material", version.r
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
+firebase-perf = { group = "com.google.firebase", name = "firebase-perf", version.ref = "firebasePerf" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+google-firebase-firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "googleFirebaseFirebasePerf" }
 

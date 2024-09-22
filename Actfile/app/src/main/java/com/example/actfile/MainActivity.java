@@ -1,4 +1,4 @@
-package com.example.activityfile_2;
+package com.example.actfile;
 
 import android.os.Bundle;
 
