@@ -47,6 +47,8 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.perf)
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.database)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
