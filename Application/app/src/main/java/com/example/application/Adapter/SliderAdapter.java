@@ -35,13 +35,13 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
 
     @NonNull
     @Override
-    public SliderAdapter.SliderViewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SliderViewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context=parent.getContext();
         return new SliderViewholder(LayoutInflater.from(context).inflate(R.layout.slider_item_container,parent,false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SliderAdapter.SliderViewholder holder, int position) {
+    public void onBindViewHolder(@NonNull SliderViewholder holder, int position) {
         holder.setImage(sliderItems.get(position));
         if(position==sliderItems.size()-2){
             viewPager2.post(runnable);

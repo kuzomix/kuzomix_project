@@ -1,16 +1,14 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.google.gms.google.services)
-    alias(libs.plugins.google.firebase.firebase.perf)
 }
 
 android {
-    namespace = "com.example.application"
-    compileSdk = 29
+    namespace = "com.example.newactivity"
+    compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.application"
-        minSdk = 24
+        applicationId = "com.example.newactivity"
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -27,29 +25,18 @@ android {
             )
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-
-    buildFeatures {
-        viewBinding = true // 修正語法
-    }
 }
 
 dependencies {
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation("com.github.ismaeldivite:chip-navigation-bar:1.4.0")
-    implementation("androidx.viewpager2:viewpager2:1.1.0")
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.perf)
-    implementation(libs.firebase.messaging)
-    implementation(libs.firebase.database)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

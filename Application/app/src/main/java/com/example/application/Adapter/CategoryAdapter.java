@@ -13,53 +13,48 @@ import com.example.application.Domain.Category;
 import com.example.application.R;
 import com.example.application.databinding.ViewholderCategoryBinding;
 
-import javax.microedition.khronos.opengles.GL;
+import java.util.List;
 
-public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Viewholder> {
+public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
     private final List<Category> items;
-    private int selectedPosition=-1;
-    private int lastSelectedPosition=-1;
-    private Context context;
+    private int selectedPosition = -1;
+    private int lastSelectedPosition = -1;
+    private final Context context;
 
-    public CategoryAdapter(List<Category> items) {
+    public CategoryAdapter(List<Category> items, Context context) {
         this.items = items;
+        this.context = context;
     }
 
     @NonNull
     @Override
-    public CategoryAdapter.Viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        context=parent.getContext();
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        ViewholderCategoryBinding binding=ViewholderCategoryBinding.inflate(inflater,parent,false);
-        return new Viewholder(binding);
+        ViewholderCategoryBinding binding = ViewholderCategoryBinding.inflate(inflater, parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CategoryAdapter.Viewholder holder, int position) {
-        Category item=items.get(position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Category item = items.get(position);
         holder.binding.title.setText(item.getName());
 
         Glide.with(holder.itemView.getContext())
                 .load(item.getImagePath())
                 .into(holder.binding.pic);
 
-        holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                lastSelectedPosition=selectedPosition;
-                selectedPosition=position;
-                notifyItemChanged(lastSelectedPosition);
-                notifyItemChanged(selectedPosition);
-            }
+        holder.binding.getRoot().setOnClickListener(view -> {
+            lastSelectedPosition = selectedPosition;
+            selectedPosition = position;
+            notifyItemChanged(lastSelectedPosition);
+            notifyItemChanged(selectedPosition);
         });
 
-        holder.binding.title.setTextColor(context.getResources().getColor(R.color.white));
-
-        if(selectedPosition==position){
+        if (selectedPosition == position) {
             holder.binding.pic.setBackgroundResource(0);
             holder.binding.mainLayout.setBackgroundResource(R.drawable.blue_bg);
             holder.binding.title.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             holder.binding.pic.setBackgroundResource(R.drawable.gray_bg);
             holder.binding.mainLayout.setBackgroundResource(0);
             holder.binding.title.setVisibility(View.GONE);
@@ -71,10 +66,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Viewho
         return items.size();
     }
 
-    public class Viewholder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public final ViewholderCategoryBinding binding;
 
-        public Viewholder(ViewholderCategoryBinding binding) {
+        public ViewHolder(ViewholderCategoryBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
