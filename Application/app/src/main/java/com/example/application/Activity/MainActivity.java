@@ -14,6 +14,7 @@ import com.example.application.Adapter.SliderAdapter;
 import com.example.application.Domain.Category;
 import com.example.application.Domain.Location;
 import com.example.application.Domain.SliderItems;
+import com.example.application.R;
 import com.example.application.databinding.ActivityMainBinding;
 
 import com.google.firebase.database.DatabaseReference;
@@ -57,7 +58,7 @@ public class MainActivity extends BaseActivity {
                     }
                     if (!list.isEmpty()) {
                         binding.recyclerViewCategory.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
-                        RecyclerView.Adapter adapter = new CategoryAdapter(list);
+                        RecyclerView.Adapter adapter = new CategoryAdapter(list, MainActivity.this);
                         binding.recyclerViewCategory.setAdapter(adapter);
                     }
                     binding.progressBarCategory.setVisibility(View.GONE);
@@ -83,7 +84,7 @@ public class MainActivity extends BaseActivity {
                     }
                     ArrayAdapter<Location> adapter = new ArrayAdapter<>(MainActivity.this, R.layout.sp_item, list);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    binding.locationSp.setAdapter(adapter);
+                    binding.spinner.setAdapter(adapter);
                 }
             }
 

@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.application"
-    compileSdk = 29
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.application"
@@ -43,7 +43,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation("com.github.ismaeldivite:chip-navigation-bar:1.4.0")
+    implementation(libs.chip.navigation.bar)
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation("com.github.bumptech.glide:glide:4.12.0")
     implementation(libs.firebase.analytics)

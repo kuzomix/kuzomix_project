@@ -6,6 +6,8 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 public class BaseActivity extends AppCompatActivity {
     FirebaseDatabase database;
     @Override
