@@ -10,8 +10,10 @@ import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 
 import com.example.application.Adapter.CategoryAdapter;
+import com.example.application.Adapter.RecommendedAdapter;
 import com.example.application.Adapter.SliderAdapter;
 import com.example.application.Domain.Category;
+import com.example.application.Domain.ItemDomain;
 import com.example.application.Domain.Location;
 import com.example.application.Domain.SliderItems;
 import com.example.application.R;
@@ -42,6 +44,36 @@ public class MainActivity extends BaseActivity {
         initLocation();
         initBanner();
         initCategory();
+        initRecommended();
+    }
+
+    private void initRecommended() {
+        DatabaseReference myRef=database.getReference("Popular");
+        binding.progressBarRecommended.setVisibility(View.VISIBLE);
+
+        ArrayList<ItemDomain> list=new ArrayList<>();
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    for(DataSnapshot issue:snapshot.getChildren()){
+                        list.add(issue.getValue(ItemDomain.class));
+                    }
+                    if(!list.isEmpty()){
+                        binding.recyclerViewRecommended.setLayoutManager(new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false));
+                    RecyclerView.Adapter adapter=new RecommendedAdapter(list);
+                    binding.recyclerViewRecommended.setAdapter(adapter);
+                    }
+                    binding.progressBarRecommended.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void initCategory() {
