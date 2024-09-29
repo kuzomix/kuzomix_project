@@ -10,6 +10,7 @@ import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 
 import com.example.application.Adapter.CategoryAdapter;
+import com.example.application.Adapter.PopularAdapter;
 import com.example.application.Adapter.RecommendedAdapter;
 import com.example.application.Adapter.SliderAdapter;
 import com.example.application.Domain.Category;
@@ -45,10 +46,39 @@ public class MainActivity extends BaseActivity {
         initBanner();
         initCategory();
         initRecommended();
+        initPopular();
+    }
+    private void initPopular() {
+        DatabaseReference myRef=database.getReference("Popular");
+        binding.progressBarPopular.setVisibility(View.VISIBLE);
+
+        ArrayList<ItemDomain> list=new ArrayList<>();
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    for(DataSnapshot issue:snapshot.getChildren()){
+                        list.add(issue.getValue(ItemDomain.class));
+                    }
+                    if(!list.isEmpty()){
+                        binding.recyclerViewPopular.setLayoutManager(new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false));
+                        RecyclerView.Adapter adapter=new PopularAdapter(list);
+                        binding.recyclerViewPopular.setAdapter(adapter);
+                    }
+                    binding.progressBarPopular.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void initRecommended() {
-        DatabaseReference myRef=database.getReference("Popular");
+        DatabaseReference myRef=database.getReference("Item");
         binding.progressBarRecommended.setVisibility(View.VISIBLE);
 
         ArrayList<ItemDomain> list=new ArrayList<>();
@@ -62,8 +92,8 @@ public class MainActivity extends BaseActivity {
                     }
                     if(!list.isEmpty()){
                         binding.recyclerViewRecommended.setLayoutManager(new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false));
-                    RecyclerView.Adapter adapter=new RecommendedAdapter(list);
-                    binding.recyclerViewRecommended.setAdapter(adapter);
+                        RecyclerView.Adapter adapter=new RecommendedAdapter(list);
+                        binding.recyclerViewRecommended.setAdapter(adapter);
                     }
                     binding.progressBarRecommended.setVisibility(View.GONE);
                 }
