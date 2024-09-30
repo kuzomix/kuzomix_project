@@ -15,6 +15,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="50dp"
             android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -62,7 +63,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="500dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="350dp"
                     android:background="@drawable/top_corner_bg"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -72,7 +73,10 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <TextView
                             android:id="@+id/titleTxt"
@@ -162,6 +166,7 @@
                                     android:textColor="@color/darkblue"
                                     android:textStyle="bold"
                                     app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintHorizontal_bias="0.69"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -169,7 +174,7 @@
                                     android:id="@+id/imageView101"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginEnd="8dp"
+                                    android:layout_marginEnd="4dp"
                                     app:layout_constraintBottom_toBottomOf="@+id/durationTxt"
                                     app:layout_constraintEnd_toStartOf="@+id/durationTxt"
                                     app:layout_constraintTop_toTopOf="@+id/durationTxt"
@@ -209,6 +214,7 @@
                                     android:textColor="@color/darkblue"
                                     android:textStyle="bold"
                                     app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintHorizontal_bias="0.69"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -216,7 +222,7 @@
                                     android:id="@+id/imageView102"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginEnd="8dp"
+                                    android:layout_marginEnd="4dp"
                                     app:layout_constraintBottom_toBottomOf="@+id/distanceTxt"
                                     app:layout_constraintEnd_toStartOf="@+id/distanceTxt"
                                     app:layout_constraintTop_toTopOf="@+id/distanceTxt"
