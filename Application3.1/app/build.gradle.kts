@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.chip.navigation.bar)
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation("com.github.bumptech.glide:glide:4.12.0")
+    implementation("com.google.firebase:firebase-database:20.0.3") //1020new
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.perf)
     implementation(libs.firebase.messaging)
