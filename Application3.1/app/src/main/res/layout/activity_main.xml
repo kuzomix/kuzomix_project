@@ -9,7 +9,7 @@
     android:background="@color/white"
     tools:context=".Activity.MainActivity">
 
-    <!-- ScrollView for holding multiple components -->
+    <!-- 滑動視圖，用來容納多個元件 -->
     <ScrollView
         android:id="@+id/locationSp"
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
             android:paddingTop="16dp"
             android:paddingBottom="16dp">
 
-            <!-- Top title and image -->
+            <!-- 頂部標題和圖片 -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/imageView" />
 
-                <!-- Dropdown Spinner -->
+                <!-- 下拉式選單 (Spinner) -->
                 <Spinner
                     android:id="@+id/spinner"
                     android:layout_width="wrap_content"
@@ -62,7 +62,7 @@
                     app:layout_constraintEnd_toEndOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Search section with EditText and Button (from the second layout) -->
+            <!-- 搜索框 -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -84,6 +84,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
+                <!-- 搜索按鈕 -->
                 <Button
                     android:id="@+id/btn_search"
                     android:layout_width="85dp"
@@ -110,7 +111,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
-                <!-- Banner Progress Bar -->
+                <!-- Banner進度條 -->
                 <ProgressBar
                     android:id="@+id/progressBarBanner"
                     style="?android:attr/progressBarStyle"
@@ -122,7 +123,7 @@
                     app:layout_constraintEnd_toEndOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Category Section -->
+            <!-- 類別部分 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -134,7 +135,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Category"
+                    android:text="活動分類"
                     android:textSize="16sp"
                     android:textColor="@color/darkblue"
                     android:textStyle="bold" />
@@ -163,7 +164,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
-                <!-- Category Progress Bar -->
+                <!-- 類別進度條 -->
                 <ProgressBar
                     android:id="@+id/progressBarCategory"
                     style="?android:attr/progressBarStyle"
@@ -175,7 +176,7 @@
                     app:layout_constraintEnd_toEndOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Recommended Section -->
+            <!-- 推薦部分 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -187,7 +188,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Recommended"
+                    android:text="推薦活動"
                     android:textSize="16sp"
                     android:textColor="@color/darkblue"
                     android:textStyle="bold" />
@@ -201,7 +202,7 @@
                     android:textColor="@color/blue" />
             </LinearLayout>
 
-            <!-- Recommended RecyclerView -->
+            <!-- 推薦RecyclerView -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -216,7 +217,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
-                <!-- Recommended Progress Bar -->
+                <!-- 推薦進度條 -->
                 <ProgressBar
                     android:id="@+id/progressBarRecommended"
                     style="?android:attr/progressBarStyle"
@@ -228,7 +229,7 @@
                     app:layout_constraintEnd_toEndOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Popular Destination Section -->
+            <!-- 熱門目的地 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -240,7 +241,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Popular Destination"
+                    android:text="關注活動"
                     android:textSize="16sp"
                     android:textColor="@color/darkblue"
                     android:textStyle="bold" />
@@ -254,7 +255,7 @@
                     android:textColor="@color/blue" />
             </LinearLayout>
 
-            <!-- Popular Destination RecyclerView -->
+            <!-- 熱門目的地RecyclerView -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -269,7 +270,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
-                <!-- Popular Destination Progress Bar -->
+                <!-- 熱門進度條 -->
                 <ProgressBar
                     android:id="@+id/progressBarPopular"
                     style="?android:attr/progressBarStyle"

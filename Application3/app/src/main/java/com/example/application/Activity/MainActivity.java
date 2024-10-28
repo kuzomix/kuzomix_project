@@ -2,6 +2,7 @@ package com.example.application.Activity;
 
 import android.os.Bundle;
 import android.view.View;
+
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -53,7 +54,7 @@ public class MainActivity extends BaseActivity {
         // 初始化各個功能
         initLocation();
         initBanner();
-        initCategory();
+        initCategory();// 加入類別初始化功能
         initRecommended();
         initPopular();
 
@@ -243,72 +244,6 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-//    //寫入資料的函數
-//    // 寫入資料到 Firebase 的方法
-//    private void writeNewItem(String itemId, String title, String description, String category) {
-//        // 生成 ItemDomain 物件
-//        ItemDomain newItem = new ItemDomain(itemId, title, description, category);
-//
-//        // 將資料寫入到 "Item" 資料節點下，使用 itemId 作為鍵值
-//        recommendedRef.child(itemId).setValue(newItem)
-//                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        if (task.isSuccessful()) {
-//                            Toast.makeText(MainActivity.this, "資料新增成功", Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            Toast.makeText(MainActivity.this, "資料新增失敗: " + task.getException(), Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//    }
-//    //讀取資料的函數
-//    if (task.isSuccessful()) {
-//        Toast.makeText(MainActivity.this, "資料新增成功", Toast.LENGTH_SHORT).show();
-//        // 寫入成功後，重新載入推薦的資料
-//        initRecommended();
-//    }
-//      //UI 事件觸發寫入
-//Button addButton = binding.btnAdd; // 綁定新增按鈕
-//
-//addButton.setOnClickListener(new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            String title = binding.etTitle.getText().toString().trim(); // 從 UI 取得輸入
-//            String description = binding.etDescription.getText().toString().trim();
-//            String category = binding.etCategory.getText().toString().trim();
-//
-//            if (!title.isEmpty() && !description.isEmpty() && !category.isEmpty()) {
-//                // 生成唯一的 itemId，這裡可以用 Firebase 提供的 push() 方法生成
-//                String itemId = recommendedRef.push().getKey();
-//                if (itemId != null) {
-//                    writeNewItem(itemId, title, description, category); // 寫入資料到 Firebase
-//                }
-//            } else {
-//                Toast.makeText(MainActivity.this, "請填寫完整的資料", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//    });
-//    //寫入地點資訊
-//private void writeNewLocation(String locationId, String locationName, String address) {
-//    // 生成 Location 物件
-//    Location newLocation = new Location(locationId, locationName, address);
-//
-//    // 將資料寫入到 "Location" 資料節點下
-//    locationRef.child(locationId).setValue(newLocation)
-//            .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                @Override
-//                public void onComplete(@NonNull Task<Void> task) {
-//                    if (task.isSuccessful()) {
-//                        Toast.makeText(MainActivity.this, "地點新增成功", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(MainActivity.this, "地點新增失敗: " + task.getException(), Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//            });
-//}
-
-    
     // 公用 RecyclerView 設置
     private void setupRecyclerView(RecyclerView recyclerView, RecyclerView.Adapter<?> adapter, int orientation) {
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, orientation, false));
@@ -339,3 +274,5 @@ public class MainActivity extends BaseActivity {
         Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 }
+
+

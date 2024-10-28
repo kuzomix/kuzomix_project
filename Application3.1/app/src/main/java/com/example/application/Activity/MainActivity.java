@@ -53,7 +53,7 @@ public class MainActivity extends BaseActivity {
         // 初始化各個功能
         initLocation();
         initBanner();
-        initCategory();
+        initCategory();// 加入類別初始化功能
         initRecommended();
         initPopular();
 

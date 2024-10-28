@@ -10,9 +10,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="158dp"
-        tools:layout_editor_absoluteY="0dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,17 +22,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/cat" />
-
+                app:srcCompat="@drawable/intro_pic" />
 
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/introTitle"
+                android:text="準備好進入NClub了嗎?"
                 android:textAlignment="center"
                 android:textColor="@color/darkblue"
-                android:textSize="43sp"
+                android:textSize="30sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -42,10 +39,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/subIntro"
+                android:text="Nclub是一款提供用戶即時報名參加、發起活動的社交軟體\n讓我們一起漫遊於此吧~"
                 android:textAlignment="center"
                 android:textColor="@color/darkblue"
-                android:textSize="16sp" />
+                android:textSize="13sp" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
