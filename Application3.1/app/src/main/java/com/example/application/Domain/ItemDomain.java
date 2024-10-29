@@ -1,8 +1,11 @@
 package com.example.application.Domain;
 
 import java.io.Serializable;
+import java.util.ArrayList; // 引入 ArrayList
 
 public class ItemDomain implements Serializable {
+    private static final long serialVersionUID = 1L; // 加入序列化ID
+
     private String title;
     private String address;
     private String description;
@@ -17,6 +20,17 @@ public class ItemDomain implements Serializable {
     private int bed;
     private String distance;
     private double score;
+
+    private ArrayList<String> tags; // 需要引入 ArrayList
+
+    // Getter 和 Setter 方法
+    public ArrayList<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(ArrayList<String> tags) {
+        this.tags = tags;
+    }
 
     public String getTitle() {
         return title;

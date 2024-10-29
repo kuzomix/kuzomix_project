@@ -2,7 +2,6 @@ package com.example.application.Activity;
 
 import android.os.Bundle;
 import android.view.View;
-
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -73,7 +72,7 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 String query = searchInput.getText().toString().trim();// 取得使用者輸入的搜尋文字
                 if (!query.isEmpty()) {
-                    searchItems(query);// 如果有輸入，則進行搜尋
+                    searchItemsByTag(query);// 如果有輸入，則進行搜尋
                 } else {
                     // 提示使用者輸入搜尋關鍵字
                     Toast.makeText(MainActivity.this, "請輸入搜尋關鍵字", Toast.LENGTH_SHORT).show();
@@ -81,26 +80,30 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
-
-    // 搜尋邏輯，假設你搜尋的資料來自 `recommendedRef`
-    private void searchItems(String query) {
-        ArrayList<ItemDomain> searchResults = new ArrayList<>(); // 用來儲存搜尋結果
+    // 搜尋特定 Tag 的項目
+    private void searchItemsByTag(String query) {
+        ArrayList<ItemDomain> searchResults = new ArrayList<>(); // 儲存搜尋結果
         recommendedRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     for (DataSnapshot issue : snapshot.getChildren()) {
-                        ItemDomain item = issue.getValue(ItemDomain.class);// 轉換 Firebase 資料為 ItemDomain 物件
-                        if (item != null && item.getTitle().toLowerCase().contains(query.toLowerCase())) {
-                            // 如果標題包含搜尋字串（不區分大小寫），加入到結果列表
-                            searchResults.add(item);
+                        ItemDomain item = issue.getValue(ItemDomain.class);
+                        if (item != null && item.getTags() != null) {
+                            // 如果Tags中包含搜尋字串，加入結果
+                            for (String tag : item.getTags()) {
+                                if (tag.equalsIgnoreCase(query)) {
+                                    searchResults.add(item);
+                                    break;
+                                }
+                            }
                         }
                     }
-                    // 如果搜尋結果不為空，則顯示結果
+                    // 顯示搜尋結果
                     if (!searchResults.isEmpty()) {
                         setupRecyclerView(binding.recyclerViewRecommended, new RecommendedAdapter(searchResults), LinearLayoutManager.HORIZONTAL);
                     } else {
-                        showError("No items found matching the search.");
+                        showError("No items found matching the search tag.");
                     }
                 } else {
                     showError("No items available for search.");
@@ -274,5 +277,3 @@ public class MainActivity extends BaseActivity {
         Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 }
-
-
