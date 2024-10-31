@@ -1,18 +1,23 @@
 package com.example.application.Activity;
 
 import android.os.Bundle;
-import android.widget.ListView;  // 導入 ListView 類
+import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.application.Adapter.CustomAdapter;
 import com.example.application.R;
 
 public class NotificationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notification); // 確保佈局檔案名正確
-
+        setContentView(R.layout.activity_notification);
         ListView listView = findViewById(R.id.listview);
-        // 設置 ListView 的數據或適配器（adapter）
-        // 您可以在這裡設置 ListView 的 adapter
+
+        // 示例數據
+        String[] data = {"項目 1", "項目 2", "項目 3"};
+
+        // 創建自定義適配器並設置給 ListView
+        CustomAdapter adapter = new CustomAdapter(this, data);
+        listView.setAdapter(adapter);
     }
 }

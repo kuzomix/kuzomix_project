@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NotificationActivity">
+    tools:context="Activity.NotificationActivity">
 
     <!-- ListView 用於顯示 CardView 列表項目 -->
     <ListView

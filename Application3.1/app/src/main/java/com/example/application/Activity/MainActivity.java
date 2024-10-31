@@ -60,7 +60,19 @@ public class MainActivity extends BaseActivity {
         initRecommended();
         initPopular();
         initSearchFunctionality(); // 初始化搜尋功能
-
+        initNotifyFunctionality(); // 初始化通知功能
+//        // 設定通知按鈕的點擊事件
+//        ImageView bellIcon = findViewById(R.id.imageView);
+//        bellIcon.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
+//                startActivity(intent); // 跳轉至 NotificationActivity
+//            }
+//        });
+    }
+    // 通知功能的初始化
+    private void initNotifyFunctionality() {
         // 設定通知按鈕的點擊事件
         ImageView bellIcon = findViewById(R.id.imageView);
         bellIcon.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +83,6 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
-
     // 搜尋功能的初始化
     private void initSearchFunctionality() {
         EditText searchInput = binding.etSearch; // 綁定 EditText
