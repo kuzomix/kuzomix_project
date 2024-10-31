@@ -1,16 +1,19 @@
 package com.example.application.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.application.Adapter.CategoryAdapter;
 import com.example.application.Adapter.PopularAdapter;
@@ -53,33 +56,41 @@ public class MainActivity extends BaseActivity {
         // 初始化各個功能
         initLocation();
         initBanner();
-        initCategory();// 加入類別初始化功能
+        initCategory(); // 加入類別初始化功能
         initRecommended();
         initPopular();
+        initSearchFunctionality(); // 初始化搜尋功能
 
-        // 初始化搜尋功能
-        initSearchFunctionality();
+        // 設定通知按鈕的點擊事件
+        ImageView bellIcon = findViewById(R.id.imageView);
+        bellIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
+                startActivity(intent); // 跳轉至 NotificationActivity
+            }
+        });
     }
 
     // 搜尋功能的初始化
     private void initSearchFunctionality() {
-        EditText searchInput = binding.etSearch;// 綁定 EditText
-        Button searchButton = binding.btnSearch;// 綁定 Button
+        EditText searchInput = binding.etSearch; // 綁定 EditText
+        Button searchButton = binding.btnSearch; // 綁定 Button
 
         // 設定按鈕點擊事件
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String query = searchInput.getText().toString().trim();// 取得使用者輸入的搜尋文字
+                String query = searchInput.getText().toString().trim(); // 取得使用者輸入的搜尋文字
                 if (!query.isEmpty()) {
-                    searchItemsByTag(query);// 如果有輸入，則進行搜尋
+                    searchItemsByTag(query); // 如果有輸入，則進行搜尋
                 } else {
-                    // 提示使用者輸入搜尋關鍵字
                     Toast.makeText(MainActivity.this, "請輸入搜尋關鍵字", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+
     // 搜尋特定 Tag 的項目
     private void searchItemsByTag(String query) {
         ArrayList<ItemDomain> searchResults = new ArrayList<>(); // 儲存搜尋結果
@@ -90,7 +101,6 @@ public class MainActivity extends BaseActivity {
                     for (DataSnapshot issue : snapshot.getChildren()) {
                         ItemDomain item = issue.getValue(ItemDomain.class);
                         if (item != null && item.getTags() != null) {
-                            // 如果Tags中包含搜尋字串，加入結果
                             for (String tag : item.getTags()) {
                                 if (tag.equalsIgnoreCase(query)) {
                                     searchResults.add(item);
@@ -99,7 +109,6 @@ public class MainActivity extends BaseActivity {
                             }
                         }
                     }
-                    // 顯示搜尋結果
                     if (!searchResults.isEmpty()) {
                         setupRecyclerView(binding.recyclerViewRecommended, new RecommendedAdapter(searchResults), LinearLayoutManager.HORIZONTAL);
                     } else {
@@ -117,7 +126,7 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    // 優化的熱門目的地初始化
+    // 初始化熱門目的地
     private void initPopular() {
         binding.progressBarPopular.setVisibility(View.VISIBLE);
         ArrayList<ItemDomain> list = new ArrayList<>();
@@ -143,7 +152,7 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    // 優化的推薦項目初始化
+    // 初始化推薦項目
     private void initRecommended() {
         binding.progressBarRecommended.setVisibility(View.VISIBLE);
         ArrayList<ItemDomain> list = new ArrayList<>();
@@ -169,7 +178,7 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    // 優化的類別初始化
+    // 初始化類別
     private void initCategory() {
         binding.progressBarCategory.setVisibility(View.VISIBLE);
         ArrayList<Category> list = new ArrayList<>();
@@ -195,7 +204,7 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    // 優化的橫幅廣告初始化
+    // 初始化橫幅廣告
     private void initBanner() {
         binding.progressBarBanner.setVisibility(View.VISIBLE);
         ArrayList<SliderItems> items = new ArrayList<>();
@@ -221,7 +230,7 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    // 優化的地點初始化
+    // 初始化地點
     private void initLocation() {
         ArrayList<Location> list = new ArrayList<>();
 
@@ -247,7 +256,7 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    // 公用 RecyclerView 設置
+    // RecyclerView 設置
     private void setupRecyclerView(RecyclerView recyclerView, RecyclerView.Adapter<?> adapter, int orientation) {
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, orientation, false));
         recyclerView.setAdapter(adapter);

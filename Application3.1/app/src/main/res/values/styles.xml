@@ -1,0 +1,7 @@
+<!-- res/values/styles.xml -->
+<resources>
+    <style name="roundedImageViewRounded">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10dp</item> <!-- 圓角大小，可根據需求調整 -->
+    </style>
+</resources>
