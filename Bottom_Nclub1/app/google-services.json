@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "760841372225",
+    "project_id": "nculb-3dd5c",
+    "storage_bucket": "nculb-3dd5c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:760841372225:android:80a0979473b1884451fcc0",
+        "android_client_info": {
+          "package_name": "com.example.bottom_main"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRu8ZKTwL6GzgcCMlpZ9wZG8DH1dr6aic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
