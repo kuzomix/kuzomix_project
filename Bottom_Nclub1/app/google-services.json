@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "760841372225",
-    "project_id": "nculb-3dd5c",
-    "storage_bucket": "nculb-3dd5c.firebasestorage.app"
+    "project_number": "77634492358",
+    "firebase_url": "https://nclub-a408e-default-rtdb.firebaseio.com",
+    "project_id": "nclub-a408e",
+    "storage_bucket": "nclub-a408e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:760841372225:android:80a0979473b1884451fcc0",
+        "mobilesdk_app_id": "1:77634492358:android:21bd9150bc124bb036c4c7",
         "android_client_info": {
           "package_name": "com.example.bottom_main"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBRu8ZKTwL6GzgcCMlpZ9wZG8DH1dr6aic"
+          "current_key": "AIzaSyBfnvYp6eWtEOuTLeCU6SvHg9iffX7Lh58"
         }
       ],
       "services": {
