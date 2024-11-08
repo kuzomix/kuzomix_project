@@ -77,6 +77,7 @@ public class HomeFragment extends Fragment {
         initSearchFunctionality(); // 初始化搜尋功能
         initNotifyFunctionality(); // 初始化通知功能
         initMapFunctionality(); // 初始化定位功能
+//        initSeeAllFunctionality();
 
         return view;
     }
@@ -210,7 +211,28 @@ public class HomeFragment extends Fragment {
                 handleError(error);
             }
         });
+
+        TextView seeAllTextView = binding.textView6; // 確保 ID 與佈局中的 TextView 匹配
+        seeAllTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SeeAllRecommended.class);
+                startActivity(intent); // 開啟 SeeAllRecommended 活動
+            }
+        });
     }
+
+//private void initSeeAllFunctionality() {
+//    TextView seeAllTextView = binding.textView6; // 確保 ID 與佈局中的 TextView 匹配
+//    seeAllTextView.setOnClickListener(new View.OnClickListener() {
+//        @Override
+//        public void onClick(View view) {
+//            Intent intent = new Intent(getActivity(), SeeAllRecommended.class);
+//            startActivity(intent); // 開啟 SeeAllRecommended 活動
+//        }
+//    });
+//}
+
 
     // 初始化類別
     private void initCategory() {

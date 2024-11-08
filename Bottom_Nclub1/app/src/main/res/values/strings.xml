@@ -14,4 +14,6 @@
         <item>寵物</item>
         <item>學習</item>
     </string-array>
+    <string name="event_image">Event Image</string>
 </resources>
+
