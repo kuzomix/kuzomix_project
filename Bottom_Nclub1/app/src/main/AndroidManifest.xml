@@ -57,6 +57,7 @@
             android:value="@string/my_map_api_key" />
 
         <activity android:name=".SeeAllRecommended" />
+        <activity android:name=".SeeAllPopular" />
     </application>
 
 </manifest>

@@ -185,6 +185,14 @@ public class HomeFragment extends Fragment {
                 handleError(error);
             }
         });
+        TextView seeAllTextView = binding.textView8; // 確保 ID 與佈局中的 TextView 匹配
+        seeAllTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SeeAllPopular.class);
+                startActivity(intent); // 開啟 SeeAllRecommended 活動
+            }
+        });
     }
 
     // 初始化推薦項目

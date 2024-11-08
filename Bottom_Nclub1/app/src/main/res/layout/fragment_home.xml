@@ -246,7 +246,7 @@
                     android:layout_height="wrap_content"
                     android:text="see all"
                     android:textSize="14sp"
-                    android:textColor="@color/blue" />
+                    android:textColor="@color/black" />
             </LinearLayout>
 
             <!-- 熱門目的地RecyclerView -->
