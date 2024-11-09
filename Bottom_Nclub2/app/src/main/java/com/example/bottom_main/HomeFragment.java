@@ -190,7 +190,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), SeeAllPopular.class);
-                startActivity(intent); // 開啟 SeeAllRecommended 活動
+                startActivity(intent); // 開啟 SeeAllPopular 活動
             }
         });
     }
