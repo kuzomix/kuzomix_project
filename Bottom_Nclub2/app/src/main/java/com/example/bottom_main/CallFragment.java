@@ -10,6 +10,8 @@ import android.provider.MediaStore;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +22,14 @@ import android.widget.TextView;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
-
+import android.widget.AdapterView;   //11.10添加
+import android.widget.ArrayAdapter;  //11.10添加
 import java.io.IOException;
 import java.util.Calendar;
 
 public class CallFragment extends Fragment {
+
+    private Spinner tagSpinner;       //11.10添加
 
     private static final int PICK_IMAGE_REQUEST = 1; // 常量用於圖片選擇請求
     private TextView detailDate; // 用於顯示選擇的日期
@@ -47,47 +52,82 @@ public class CallFragment extends Fragment {
         detailDate = view.findViewById(R.id.detailDate); // 找到顯示日期的 TextView
         detailImage = view.findViewById(R.id.detailImage); // 找到顯示圖片的 ImageView
         selectImageBtn = view.findViewById(R.id.selectImageBtn); // 找到選擇圖片的按鈕
+
         // 初始化 Spinner
         categorySpinner = view.findViewById(R.id.categorySpinner);
+        tagSpinner = view.findViewById(R.id.tagSpinner);
 
         // 使用 ArrayAdapter 將分類選項設置給 Spinner
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                getActivity(),
-                R.array.activity_categories,
-                android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categorySpinner.setAdapter(adapter);
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+//                getActivity(),
+//                R.array.categories,
+//                android.R.layout.simple_spinner_item);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        categorySpinner.setAdapter(adapter);
 
-        // 设置点击监听器
-        create.setOnClickListener(new View.OnClickListener() {
+        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(
+                getActivity(), R.array.categories, android.R.layout.simple_spinner_item);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(categoryAdapter);
+//        Log.d("Debug", "CallFragment: categorySpinner ");
+
+        // 根據所選類別更新 tagSpinner 選項
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                // 显示 Toast 消息
-                Toast.makeText(getActivity(), "活動已創建", Toast.LENGTH_SHORT).show();
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                int tagArrayId;
+                switch (position) {
+                    case 0: // Leisure
+                        tagArrayId = R.array.leisure_tags;
+                        break;
+                    case 1: // Sports
+                        tagArrayId = R.array.sports_tags;
+                        break;
+                    case 2: // Car Meet
+                        tagArrayId = R.array.car_meet_tags;
+                        break;
+                    case 3: // Travel
+                        tagArrayId = R.array.travel_tags;
+                        break;
+                    case 4: // Food
+                        tagArrayId = R.array.food_tags;
+                        break;
+                    case 5: // Pets
+                        tagArrayId = R.array.pet_tags;
+                        break;
+                    case 6: // Learning
+                        tagArrayId = R.array.learning_tags;
+                        break;
+                    default:
+                        tagArrayId = R.array.travel_tags;
+                        break;
+                }
+
+                ArrayAdapter<CharSequence> tagAdapter = ArrayAdapter.createFromResource(
+                        getActivity(), tagArrayId, android.R.layout.simple_spinner_item);
+                tagAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                tagSpinner.setAdapter(tagAdapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // No action needed
             }
         });
 
-        call_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "返回主頁面", Toast.LENGTH_SHORT).show();
+        // Set up button actions
+        create.setOnClickListener(v -> Toast.makeText(getActivity(), "活動已創建", Toast.LENGTH_SHORT).show());
 
-                // 使用 FragmentTransaction 切换到 HomeFragment
-                FragmentManager fragmentManager = getParentFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                // 替换当前的 CallFragment 为 HomeFragment
-                fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
-
-                // 可选：将该事务添加到返回栈中，以便用户可以按返回键返回 CallFragment
-                fragmentTransaction.addToBackStack(null);
-
-                // 提交事务
-                fragmentTransaction.commit();
-            }
+        call_back.setOnClickListener(v -> {
+            Toast.makeText(getActivity(), "返回主頁面", Toast.LENGTH_SHORT).show();
+            FragmentManager fragmentManager = getParentFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         });
 
-        // 設置選擇日期的按鈕點擊事件
+        // Set up date selection
         selectDateBtn.setOnClickListener(view1 -> {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -96,18 +136,68 @@ public class CallFragment extends Fragment {
 
             DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
                     (datePicker, selectedYear, selectedMonth, selectedDay) -> {
-                        // 更新 TextView 顯示選擇的日期
                         String date = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
                         detailDate.setText(date);
                     }, year, month, day);
             datePickerDialog.show();
         });
 
-        // 設置選擇圖片的按鈕點擊事件
+        // Set up image selection
         selectImageBtn.setOnClickListener(view12 -> openFileChooser());
 
         return view;
     }
+
+//        // 设置点击监听器
+//        create.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // 显示 Toast 消息
+//                Toast.makeText(getActivity(), "活動已創建", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//        call_back.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(getActivity(), "返回主頁面", Toast.LENGTH_SHORT).show();
+//
+//                // 使用 FragmentTransaction 切换到 HomeFragment
+//                FragmentManager fragmentManager = getParentFragmentManager();
+//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//
+//                // 替换当前的 CallFragment 为 HomeFragment
+//                fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
+//
+//                // 可选：将该事务添加到返回栈中，以便用户可以按返回键返回 CallFragment
+//                fragmentTransaction.addToBackStack(null);
+//
+//                // 提交事务
+//                fragmentTransaction.commit();
+//            }
+//        });
+//
+//        // 設置選擇日期的按鈕點擊事件
+//        selectDateBtn.setOnClickListener(view1 -> {
+//            Calendar calendar = Calendar.getInstance();
+//            int year = calendar.get(Calendar.YEAR);
+//            int month = calendar.get(Calendar.MONTH);
+//            int day = calendar.get(Calendar.DAY_OF_MONTH);
+//
+//            DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
+//                    (datePicker, selectedYear, selectedMonth, selectedDay) -> {
+//                        // 更新 TextView 顯示選擇的日期
+//                        String date = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+//                        detailDate.setText(date);
+//                    }, year, month, day);
+//            datePickerDialog.show();
+//        });
+//
+//        // 設置選擇圖片的按鈕點擊事件
+//        selectImageBtn.setOnClickListener(view12 -> openFileChooser());
+//
+//        return view;
+//    }
 
     // 打開文件選擇器以選擇圖片
     private void openFileChooser() {
