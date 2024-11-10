@@ -1,5 +1,7 @@
 package com.example.bottom_main;
 
+import android.util.Log;
+
 public class HelperClass {
     String name,email, username, password, createdAt, lastLogin, userId;
 
@@ -59,6 +61,10 @@ public class HelperClass {
         this.createdAt =createdAt;
         this.lastLogin =lastLogin;
         this.userId = userId;
+        Log.d("Debug", "HelperClass.java userId: " + this.userId);
+        Log.d("Debug", "HelperClass.java hashedPassword: " + password);
+
+
     }
 
     public HelperClass(){
