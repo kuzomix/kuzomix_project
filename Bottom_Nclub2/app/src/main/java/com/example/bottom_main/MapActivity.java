@@ -1,23 +1,36 @@
 package com.example.bottom_main;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.health.connect.datatypes.ExerciseRoute;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -26,66 +39,115 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
-    private final int FINE_PERMISSION_CODE = 1;
+    private static final int FINE_PERMISSION_CODE = 1;
     private GoogleMap myMap;
-    Location currentLocation;
-    FusedLocationProviderClient fusedLocationProviderClient;
+    private Location currentLocation;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private DatabaseReference databaseReference;
+    private String selfIconUrl = "https://i.imgur.com/ssQ5J2j.jpeg";
+    private EditText addressEditText;
+    private FloatingActionButton fab;
 
-    // 模擬好友位置資料
-    List<Friend> friends = new ArrayList<>();
-
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        // 初始化位置提供者
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        addressEditText = findViewById(R.id.addressEditText);
+        fab = findViewById(R.id.fab);
+
+        initFabClickListener();
+
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        databaseReference = FirebaseDatabase.getInstance().getReference("friends");
 
-        // 初始化好友列表
-        initFriends();
-
-        // 獲取最後的已知位置
         getLastLocation();
     }
 
-    private void initFriends() {
-        //test
-        friends.add(new Friend("chaewon", 25.033964, 121.564468, R.drawable.chaewon));  // 台北
-        friends.add(new Friend("kazuha", 23.627278, 120.301435, R.drawable.kazuha));  // 高雄
-        friends.add(new Friend("sakura", 24.147736, 120.673648, R.drawable.sakura));  // 台中
+    private void initFabClickListener() {
+        if (fab != null) {
+            fab.setOnClickListener(v -> {
+                if (addressEditText.getVisibility() == View.GONE) {
+                    addressEditText.setVisibility(View.VISIBLE);
+                } else {
+                    addressEditText.setVisibility(View.GONE);
+                    searchLocationAndMark();
+                }
+            });
+        } else {
+            Log.e("MainActivity", "Floating Action Button not found in layout");
+        }
+    }
+
+    private void searchLocationAndMark() {
+        String address = addressEditText.getText().toString();
+        if (address.isEmpty()) {
+            Toast.makeText(this, "請輸入地址", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address location = addresses.get(0);
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+                if (myMap != null) {
+                    myMap.addMarker(new MarkerOptions().position(latLng).title("搜尋結果").snippet(address));
+                    myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                    addressEditText.setVisibility(View.GONE);
+                }
+            } else {
+                Toast.makeText(this, "找不到該地址", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "無法搜尋該地址", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, FINE_PERMISSION_CODE);
             return;
         }
-        Task<Location> task = fusedLocationProviderClient.getLastLocation();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null) {
-                    currentLocation = location;
 
-                    // 當位置獲取成功，初始化地圖
-                    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        Task<Location> task = fusedLocationProviderClient.getLastLocation();
+        task.addOnSuccessListener(location -> {
+            if (location != null) {
+                currentLocation = location;
+
+                SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+                if (mapFragment != null) {
                     mapFragment.getMapAsync(MapActivity.this);
+                } else {
+                    Toast.makeText(this, "無法加載地圖", Toast.LENGTH_SHORT).show();
                 }
+
+                loadFriendsDataFromFirebase();
+                addSelfMarker();
             }
         });
     }
@@ -94,132 +156,194 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(@NonNull GoogleMap googleMap) {
         myMap = googleMap;
 
-        // 顯示用戶自己的位置
-        LatLng userLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        myMap.addMarker(new MarkerOptions().position(userLocation).title("我的位置"));
-
-        // 自動調整視角
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(userLocation);  // 包括用戶位置
-
-        // 顯示好友的位置, 自定義圖標並使用 Glide 裁剪成圓形
-        for (Friend friend : friends) {
-            LatLng friendLocation = new LatLng(friend.latitude, friend.longitude);
-            // 使用 Glide 將圖標裁剪為圓形，並設置大小
-            Glide.with(this)
-                    .asBitmap()
-                    .load(friend.iconResId)
-                    .transform(new CircleCrop())  // 圓形裁剪
-                    .override(150, 150)  // 設置圖片大小為 100x100 像素
-                    .into(new CustomTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull Bitmap resource, @NonNull Transition<? super Bitmap> transition) {
-                            // 當圖片準備好後，將其設置為地圖標記
-                            myMap.addMarker(new MarkerOptions()
-                                    .position(friendLocation)
-                                    .title(friend.name)
-                                    .icon(BitmapDescriptorFactory.fromBitmap(resource)));  // 設置自定義圖標
-
-                            // 包括好友位置
-                            builder.include(friendLocation);
-                        }
-
-                        @Override
-                        public void onLoadCleared(@Nullable Drawable placeholder) {
-                            // 可以處理 Glide 加載時的佔位圖
-                        }
-                    });
+        if (currentLocation != null) {
+            LatLng userLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
         }
 
-        // 自動調整地圖視角以顯示所有標記0000
-        LatLngBounds bounds = builder.build();
-        myMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
-
-        myMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+        // 設置自定義 InfoWindowAdapter
+        myMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
-                showBottomDialog(marker.getTitle());
-                return false; // 返回 false 表示事件未消耗，仍會觸發預設行為
+            public View getInfoWindow(Marker marker) {
+                View infoView = getLayoutInflater().inflate(R.layout.custom_info_window, null);
+                TextView title = infoView.findViewById(R.id.title);
+                TextView snippet = infoView.findViewById(R.id.snippet);
+
+                title.setText(marker.getTitle());
+                snippet.setText(marker.getSnippet());
+                return infoView;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                return null;
             }
         });
-    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == FINE_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastLocation();
+        // 設置 Marker 點擊事件
+        myMap.setOnMarkerClickListener(marker -> {
+            if ("self".equals(marker.getTag())) {
+                showFunctionDialog(marker);  // 顯示功能對話框
             } else {
-                Toast.makeText(this, "位置權限被拒絕，請允許權限", Toast.LENGTH_SHORT).show();
+                startNavigationToMarker(marker);  // 導航至好友位置
             }
+            return true;
+        });
+    }
+
+    // 導航至好友位置
+    private void startNavigationToMarker(Marker marker) {
+        LatLng destination = marker.getPosition();
+        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + destination.latitude + "," + destination.longitude);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+
+        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(mapIntent);
+        } else {
+            Toast.makeText(this, "無法啟動 Google 地圖", Toast.LENGTH_SHORT).show();
         }
     }
-    private void showBottomDialog(String friendName)
-    {
-        // 創建 BottomSheetDialog
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
 
-        // 加載自定義佈局
-        View bottomSheetView = getLayoutInflater().inflate(R.layout.dialog_bottom_sheet, null);
 
-        // 設置佈局到對話框
-        bottomSheetDialog.setContentView(bottomSheetView);
-
-        // 設置對話框中顯示的好友名字
-        TextView userName = bottomSheetView.findViewById(R.id.user_name_text_view);
-        userName.setText(friendName);  // 根據點擊的標記設置名字
-
-        // 設置對話框中的其他元素，例如發送訊息按鈕、罐頭訊息按鈕等
-        Button sendMessageButton = bottomSheetView.findViewById(R.id.send_message_button);
-        Button cannedMessageButton = bottomSheetView.findViewById(R.id.canned_message_button);
-        Button roadMessageButton = bottomSheetView.findViewById(R.id.road_message_button);
-
-        // 發送訊息按鈕點擊事件
-        sendMessageButton.setOnClickListener(new View.OnClickListener() {
+    private void loadFriendsDataFromFirebase() {
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                // 在這裡實現發送訊息的功能
-                Toast.makeText(MapActivity.this, "發送訊息給 " + friendName, Toast.LENGTH_SHORT).show();
-                bottomSheetDialog.dismiss();  // 關閉對話框
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String name = snapshot.child("name").getValue(String.class);
+                    double latitude = snapshot.child("latitude").getValue(Double.class);
+                    double longitude = snapshot.child("longitude").getValue(Double.class);
+                    String iconUrl = snapshot.child("icon_url").getValue(String.class);
+                    String lastOnlineTime = snapshot.child("lastOnlineTime").getValue(String.class); // 新增最後上線時間
+
+                    addFriendMarker(name, latitude, longitude, iconUrl, lastOnlineTime);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                runOnUiThread(() -> {
+                    Toast.makeText(MapActivity.this, "讀取好友資料失敗：" + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                });
             }
         });
-
-        // 罐頭訊息按鈕點擊事件
-        cannedMessageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 在這裡實現發送罐頭訊息的功能
-                Toast.makeText(MapActivity.this, "發送訊息給 " + friendName, Toast.LENGTH_SHORT).show();
-                bottomSheetDialog.dismiss();  // 關閉對話框
-            }
-        });
-
-        roadMessageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 在這裡實現發送罐頭訊息的功能
-                Toast.makeText(MapActivity.this, "發送訊息給 " + friendName, Toast.LENGTH_SHORT).show();
-                bottomSheetDialog.dismiss();  // 關閉對話框
-            }
-        });
-
-        // 顯示對話框
-        bottomSheetDialog.show();
     }
 
-    // 好友類，用於存儲好友的位置信息
-    class Friend {
-        String name;
-        double latitude;
-        double longitude;
-        int iconResId;  // 圖標資源 ID
 
-        public Friend(String name, double latitude, double longitude, int iconResId) {
-            this.name = name;
-            this.latitude = latitude;
-            this.longitude = longitude;
-            this.iconResId = iconResId;
+    private void addSelfMarker() {
+        Glide.with(this)
+                .asBitmap()
+                .load(selfIconUrl)
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        if (myMap != null && currentLocation != null) {
+                            LatLng userLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                            Bitmap circularBitmap = getCircularBitmap(resource);
+                            Marker marker = myMap.addMarker(new MarkerOptions()
+                                    .position(userLocation)
+                                    .title("你的位置")
+                                    .icon(BitmapDescriptorFactory.fromBitmap(circularBitmap)));
+                            if (marker != null) {
+                                marker.setTag("self");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                    }
+                });
+    }
+
+    private void addFriendMarker(String name, double latitude, double longitude, String iconUrl, String lastOnlineTime) {
+        Glide.with(this)
+                .asBitmap()
+                .load(iconUrl)
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        if (myMap != null) {
+                            LatLng friendLocation = new LatLng(latitude, longitude);
+                            Marker friendMarker = myMap.addMarker(new MarkerOptions()
+                                    .position(friendLocation)
+                                    .title(name) // 設定名字作為 title
+                                    .snippet("最後上線時間: " + lastOnlineTime) // 設定最後上線時間作為 snippet
+                                    .icon(BitmapDescriptorFactory.fromBitmap(getCircularBitmap(resource))));
+                        }
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                    }
+                });
+    }
+
+
+    private Bitmap getCircularBitmap(Bitmap bitmap) {
+        int diameter = 150;
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, diameter, diameter, true);
+        Bitmap output = Bitmap.createBitmap(diameter, diameter, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final Paint paint = new Paint();
+        final Rect srcRect = new Rect(0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight());
+        final RectF destRect = new RectF(0, 0, diameter, diameter);
+
+        paint.setAntiAlias(true);
+        canvas.drawOval(destRect, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(scaledBitmap, srcRect, destRect, paint);
+
+        return output;
+    }
+
+    private void showFunctionDialog(Marker marker) {
+        if ("self".equals(marker.getTag())) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            View customView = getLayoutInflater().inflate(R.layout.custom_dialog_layout, null);
+            builder.setView(customView);
+
+            AlertDialog dialog = builder.create();
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+            TextView titleTextView = customView.findViewById(R.id.dialogTitle);
+            Button sosButton = customView.findViewById(R.id.sosButton);
+            Button lostButton = customView.findViewById(R.id.lostButton);
+            Button arrivedButton = customView.findViewById(R.id.arrivedButton);
+
+            titleTextView.setText("選擇操作");
+
+            sosButton.setOnClickListener(v -> {
+                sendMessageToMarker(marker, "SOS");
+                dialog.dismiss();
+            });
+
+            lostButton.setOnClickListener(v -> {
+                sendMessageToMarker(marker, "我迷路了");
+                dialog.dismiss();
+            });
+
+            arrivedButton.setOnClickListener(v -> {
+                sendMessageToMarker(marker, "我到了");
+                dialog.dismiss();
+            });
+
+            dialog.show();
         }
     }
+
+
+    private void sendMessageToMarker(Marker marker, String message) {
+        marker.setSnippet(message);
+        marker.showInfoWindow();
+//        LatLng markerPosition = marker.getPosition();
+//        String userName = "你的名稱";
+        Toast.makeText(this, "訊息：" + message, Toast.LENGTH_SHORT).show();
+
+    }
+
+
 }
