@@ -35,7 +35,7 @@ public class SeeAllRecommended extends AppCompatActivity {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing));
 
         // 初始化適配器並設置 RecyclerView
-        eventAdapter = new EventAdapter(recommendedEvents);
+        eventAdapter = new EventAdapter(recommendedEvents, this);
         recyclerView.setAdapter(eventAdapter);
 
         // 呼叫方法取得推薦活動
@@ -50,13 +50,14 @@ public class SeeAllRecommended extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 recommendedEvents.clear(); // 清空舊資料，避免重複
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String id = snapshot.getKey();
                     String title = snapshot.child("title").getValue(String.class);
                     String imageUrl = snapshot.child("pic").getValue(String.class);
                     String description = snapshot.child("description").getValue(String.class);
-                    Log.d("Firebase", "title imageUrl description: " +title+";"+imageUrl+";"+description);
+                    Log.d("Firebase", "title imageUrl description: " + title + ";" + imageUrl + ";" + description);
 
                     if (title != null && imageUrl != null && description != null) {
-                        Event event = new Event(title, imageUrl, description);
+                        Event event = new Event(id,title, imageUrl, description);
                         recommendedEvents.add(event);
                         Log.d("Firebase", "Loaded event: " + recommendedEvents.size());
 
@@ -77,12 +78,4 @@ public class SeeAllRecommended extends AppCompatActivity {
             }
         });
     }
-
-//    private List<Event> getAllRecommendedEvents() {
-//        // 這裡添加一些假數據或從數據庫中加載
-//        List<Event> events = new ArrayList<>();
-//        events.add(new Event("跨年之旅", "https://firebasestorage.googleapis.com/v0/b/application-b3354.appspot.com/o/Taipei101.jpg?alt=media&token=e7c10f7c-2919-46d3-872b-d3f05602dcd9", "有人跨年想要一起跨年的嗎~ 都可以參加!!徵求熱氣球觀賞夥伴~"));
-//        events.add(new Event("熱氣球嘉年華", "https://firebasestorage.googleapis.com/v0/b/application-b3354.appspot.com/o/hot.jpg?alt=media&token=de82566d-7154-4bf9-8ec8-5bb64af573dc", "徵求熱氣球觀賞夥伴~"));
-//        return events;
-//    }
 }
