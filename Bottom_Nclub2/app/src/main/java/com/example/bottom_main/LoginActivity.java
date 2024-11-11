@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 intent.putExtra("username", userUsername);
                                 intent.putExtra("email", userSnapshot.child("email").getValue(String.class));
-                                intent.putExtra("name", userSnapshot.child("name").getValue(String.class));
+                                intent.putExtra("userId", userSnapshot.child("userId").getValue(String.class));
                                 startActivity(intent);
                             } else {
                                 loginPassword.setError("您輸入的密碼錯誤!");

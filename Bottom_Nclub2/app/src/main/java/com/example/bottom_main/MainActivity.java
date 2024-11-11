@@ -23,7 +23,7 @@ import com.example.bottom_main.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
-    String username, email, name; // 將 username, email 和 name 宣告為成員變數
+    String username, email, userId; // 將 username, email 和 userId 宣告為成員變數
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +36,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
         email = intent.getStringExtra("email");
-        name = intent.getStringExtra("name");
+        userId = intent.getStringExtra("userId");
 
         // 傳遞資料給 HomeFragment
         Bundle homeBundle = new Bundle();
         homeBundle.putString("username", username);
         homeBundle.putString("email", email);
-        homeBundle.putString("name", name);
+        homeBundle.putString("userId", userId);
         HomeFragment homeFragment = new HomeFragment();
         homeFragment.setArguments(homeBundle);
 
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                     Bundle homeArgs = new Bundle();
                     homeArgs.putString("username", username);
                     homeArgs.putString("email", email);
-                    homeArgs.putString("name", name);
+                    homeArgs.putString("userId", userId);
                     selectedFragment.setArguments(homeArgs);
                     break;
 
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     Bundle accountArgs = new Bundle();
                     accountArgs.putString("username", username);
                     accountArgs.putString("email", email);
-                    accountArgs.putString("name", name);
+                    accountArgs.putString("userId", userId);
                     selectedFragment.setArguments(accountArgs);
                     break;
             }
@@ -113,7 +113,15 @@ public class MainActivity extends AppCompatActivity {
 
         videoLayout.setOnClickListener(v -> {
             dialog.dismiss();
-            replaceFragment(new CallFragment());
+            // 創建 CallFragment 實例
+            CallFragment callFragment = new CallFragment();
+            // 傳遞 username
+            Bundle callArgs = new Bundle();
+            callArgs.putString("username", username);
+            callArgs.putString("userId", userId);
+            callFragment.setArguments(callArgs);
+
+            replaceFragment(callFragment);
             Toast.makeText(MainActivity.this, "創建召集版", Toast.LENGTH_SHORT).show();
         });
 

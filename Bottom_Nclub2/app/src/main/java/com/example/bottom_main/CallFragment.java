@@ -25,7 +25,16 @@ import android.widget.Toast;
 import android.widget.AdapterView;   //11.10添加
 import android.widget.ArrayAdapter;  //11.10添加
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.ArrayList;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 
 public class CallFragment extends Fragment {
 
@@ -38,12 +47,24 @@ public class CallFragment extends Fragment {
     private Button selectImageBtn; // 用於選擇圖片的按鈕
     private Uri imageUri; // 用於存儲圖片的 URI
     private Spinner categorySpinner; // 新增 Spinner 元件
+    private List<ActivityItem> ITEMS = new ArrayList<ActivityItem>();
+    private String username;
+    private String userId;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_call, container, false);
+
+        // 獲取傳遞過來的 username
+        if (getArguments() != null) {
+            username = getArguments().getString("username");
+            userId = getArguments().getString("userId");
+            Log.d("Debug", "CallFragment username:"+ username );
+
+        }
 
         // 找到按钮
         Button create = view.findViewById(R.id.create);
@@ -116,7 +137,36 @@ public class CallFragment extends Fragment {
         });
 
         // Set up button actions
-        create.setOnClickListener(v -> Toast.makeText(getActivity(), "活動已創建", Toast.LENGTH_SHORT).show());
+        create.setOnClickListener(v -> {
+
+            String selectedDate = detailDate.getText().toString();
+            String selectedCategory = categorySpinner.getSelectedItem().toString();
+            String selectedTag = tagSpinner.getSelectedItem().toString();
+//            String imageUriString = imageUri.toString(); // 將 Uri 轉換為 String
+            String imageUriString = "https://firebasestorage.googleapis.com/v0/b/nclub-a408e.appspot.com/o/Taipei101.jpg?alt=media&token=eb1f8169-c982-44e0-a7ca-1ccefef6c733"; // 將 Uri 轉換為 String
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            FirebaseUser item = auth.getCurrentUser();
+            if (item != null) {
+                String itemId = "itemId_" + item.getUid(); // 使用 Firebase UID 作為item ID
+                Log.d("Debug", "CallFragment itemId: " + itemId);
+
+
+                Log.d("Debug", "setOnClickListener selectedDate:" + selectedDate);
+                Log.d("Debug", "setOnClickListener selectedCategory:" + selectedCategory);
+                Log.d("Debug", "setOnClickListener selectedTag:" + selectedTag);
+                Log.d("Debug", "setOnClickListener imageUriString:" + imageUriString);
+
+                ActivityItem newItem = new ActivityItem(selectedDate, selectedCategory, selectedTag, imageUriString, itemId);
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("items");
+                reference.child(itemId).setValue(newItem)
+                        .addOnSuccessListener(documentReference -> Toast.makeText(getActivity(), "活動已創建", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e -> Toast.makeText(getActivity(), "創建活動失敗", Toast.LENGTH_SHORT).show());
+                Toast.makeText(getActivity(), "活動已創建", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(getActivity(), "創建失敗: ", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         call_back.setOnClickListener(v -> {
             Toast.makeText(getActivity(), "返回主頁面", Toast.LENGTH_SHORT).show();

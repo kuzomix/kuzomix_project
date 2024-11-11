@@ -55,10 +55,10 @@ public class HomeFragment extends Fragment {
         if (bundle != null) {
             String username = bundle.getString("username");
             String email = bundle.getString("email");
-            String name = bundle.getString("name");
+            String userId = bundle.getString("userId");
             // 使用這些資料
             TextView usernameTextView = view.findViewById(R.id.textView3);
-            usernameTextView.setText(name);
+            usernameTextView.setText(username);
         }
         // 初始化 Firebase 資料庫和各個引用
         database = FirebaseDatabase.getInstance();
