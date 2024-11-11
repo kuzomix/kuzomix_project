@@ -27,8 +27,10 @@ import android.widget.ArrayAdapter;  //11.10添加
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,9 +49,14 @@ public class CallFragment extends Fragment {
     private Button selectImageBtn; // 用於選擇圖片的按鈕
     private Uri imageUri; // 用於存儲圖片的 URI
     private Spinner categorySpinner; // 新增 Spinner 元件
-    private List<ActivityItem> ITEMS = new ArrayList<ActivityItem>();
+//    private List<ActivityItem> ITEMS = new ArrayList<ActivityItem>();
     private String username;
     private String userId;
+    private int tagArrayId;
+    private EditText activityName, activityAddress, activityDescription, participantCount;
+
+
+
 
 
     @Override
@@ -73,6 +80,10 @@ public class CallFragment extends Fragment {
         detailDate = view.findViewById(R.id.detailDate); // 找到顯示日期的 TextView
         detailImage = view.findViewById(R.id.detailImage); // 找到顯示圖片的 ImageView
         selectImageBtn = view.findViewById(R.id.selectImageBtn); // 找到選擇圖片的按鈕
+        activityName = view.findViewById(R.id.activityName);
+        activityAddress = view.findViewById(R.id.detailIngredients);
+        activityDescription = view.findViewById(R.id.detailDesc);
+        participantCount = view.findViewById(R.id.participantCount);
 
         // 初始化 Spinner
         categorySpinner = view.findViewById(R.id.categorySpinner);
@@ -96,7 +107,6 @@ public class CallFragment extends Fragment {
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                int tagArrayId;
                 switch (position) {
                     case 0: // Leisure
                         tagArrayId = R.array.leisure_tags;
@@ -138,33 +148,95 @@ public class CallFragment extends Fragment {
 
         // Set up button actions
         create.setOnClickListener(v -> {
-
+            String nameString = activityName.getText().toString();;
+            String addressString = activityAddress.getText().toString();
+            String descriptionString = activityDescription.getText().toString();
+            String perticipantCountString = participantCount.getText().toString();
+            int activityBed =5;
+            if (!perticipantCountString.isEmpty()) {
+                activityBed = Integer.parseInt(perticipantCountString);
+            }
             String selectedDate = detailDate.getText().toString();
             String selectedCategory = categorySpinner.getSelectedItem().toString();
             String selectedTag = tagSpinner.getSelectedItem().toString();
-//            String imageUriString = imageUri.toString(); // 將 Uri 轉換為 String
-            String imageUriString = "https://firebasestorage.googleapis.com/v0/b/nclub-a408e.appspot.com/o/Taipei101.jpg?alt=media&token=eb1f8169-c982-44e0-a7ca-1ccefef6c733"; // 將 Uri 轉換為 String
+            String imageUriString = ""; // 將 Uri 轉換為 String
+            if (imageUri == null) {
+                imageUriString = "https://firebasestorage.googleapis.com/v0/b/nclub-a408e.appspot.com/o/Taipei101.jpg?alt=media&token=eb1f8169-c982-44e0-a7ca-1ccefef6c733"; // 將 Uri 轉換為 String
+            } else {
+                imageUriString = imageUri.toString(); // 將 Uri 轉換為 String
+            }
             FirebaseAuth auth = FirebaseAuth.getInstance();
             FirebaseUser item = auth.getCurrentUser();
-            if (item != null) {
-                String itemId = "itemId_" + item.getUid(); // 使用 Firebase UID 作為item ID
-                Log.d("Debug", "CallFragment itemId: " + itemId);
 
+            if (item != null) {
+                String itemUid = FirebaseDatabase.getInstance().getReference("items").push().getKey();
+                String itemId = "itemId_" +itemUid;
+                Log.d("Debug", "CallFragment itemId: " + itemId);
+                String chatroomId = "chatroomId_" + itemUid; // 使用 Firebase UID 作為chatroom ID
+                Log.d("Debug", "CallFragment chatroomId_: " + chatroomId);
 
                 Log.d("Debug", "setOnClickListener selectedDate:" + selectedDate);
                 Log.d("Debug", "setOnClickListener selectedCategory:" + selectedCategory);
                 Log.d("Debug", "setOnClickListener selectedTag:" + selectedTag);
                 Log.d("Debug", "setOnClickListener imageUriString:" + imageUriString);
 
-                ActivityItem newItem = new ActivityItem(selectedDate, selectedCategory, selectedTag, imageUriString, itemId);
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("items");
-                reference.child(itemId).setValue(newItem)
-                        .addOnSuccessListener(documentReference -> Toast.makeText(getActivity(), "活動已創建", Toast.LENGTH_SHORT).show())
+//                ActivityItem newItem = new ActivityItem(selectedDate, selectedCategory, selectedTag, imageUriString, itemId);
+//                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("items");
+                // 定義活動項目
+                Map<String, Object> itemData = new HashMap<>();
+                itemData.put("address", addressString);
+                itemData.put("bed", activityBed);
+                itemData.put("dateTour", selectedDate);
+                itemData.put("description", descriptionString);
+                itemData.put("duration", selectedDate);
+                itemData.put("pic",imageUriString);
+                itemData.put("distance", "");
+                itemData.put("price", 1000.0);
+                itemData.put("score", 5);
+                itemData.put("timeTour", "12:00 PM");
+                itemData.put("title", nameString);
+                itemData.put("category", selectedCategory);
+                itemData.put("tag", selectedTag);
+                itemData.put("tagArrayId", tagArrayId);
+                itemData.put("ownUser", userId); // 設置擁有者為當前用戶
+
+
+                // 定義聊天房間
+                Map<String, Object> chatroomData = new HashMap<>();
+                chatroomData.put("members", new HashMap<String, Boolean>() {{
+                    put(userId, true); // 添加當前用戶
+                }});
+                // 定義消息
+                Map<String, Object> messages = new HashMap<>();
+                messages.put("message_id_1", new HashMap<String, Object>() {{
+                    put("sender", userId);
+                    put("text", descriptionString);
+                    put("timestamp", System.currentTimeMillis() / 1000); // 當前時間戳
+                }});
+                chatroomData.put("messages", messages);
+                chatroomData.put("tourItemId", itemId);
+
+//                reference.child(itemId).setValue(newItem)
+//                        .addOnSuccessListener(documentReference -> Toast.makeText(getActivity(), "活動已創建", Toast.LENGTH_SHORT).show())
+//                        .addOnFailureListener(e -> Toast.makeText(getActivity(), "創建活動失敗", Toast.LENGTH_SHORT).show());
+//                Toast.makeText(getActivity(), "活動已創建", Toast.LENGTH_SHORT).show();
+//            }
+//            else {
+//                Toast.makeText(getActivity(), "創建失敗: ", Toast.LENGTH_SHORT).show();
+//            }
+                // 寫入數據到 Firebase
+                DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("Items").child(itemId);
+                DatabaseReference chatroomsRef = FirebaseDatabase.getInstance().getReference("chatrooms").child(chatroomId);
+
+                // 寫入活動項目
+                itemsRef.setValue(itemData)
+                        .addOnSuccessListener(aVoid -> {
+                            // 寫入聊天房間
+                            chatroomsRef.setValue(chatroomData)
+                                    .addOnSuccessListener(aVoid1 -> Toast.makeText(getActivity(), "活動和聊天房間已創建", Toast.LENGTH_SHORT).show())
+                                    .addOnFailureListener(e -> Toast.makeText(getActivity(), "創建聊天房間失敗", Toast.LENGTH_SHORT).show());
+                        })
                         .addOnFailureListener(e -> Toast.makeText(getActivity(), "創建活動失敗", Toast.LENGTH_SHORT).show());
-                Toast.makeText(getActivity(), "活動已創建", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                Toast.makeText(getActivity(), "創建失敗: ", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -186,7 +258,7 @@ public class CallFragment extends Fragment {
 
             DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
                     (datePicker, selectedYear, selectedMonth, selectedDay) -> {
-                        String date = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                        String date = String.format("%04d/%02d/%02d", selectedYear, selectedMonth + 1, selectedDay);
                         detailDate.setText(date);
                     }, year, month, day);
             datePickerDialog.show();
