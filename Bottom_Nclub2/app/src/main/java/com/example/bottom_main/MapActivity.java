@@ -141,7 +141,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
                 if (mapFragment != null) {
-                    mapFragment.getMapAsync(MapActivity.this);
+                    mapFragment.getMapAsync(com.example.bottom_main.MapActivity.this);
                 } else {
                     Toast.makeText(this, "無法加載地圖", Toast.LENGTH_SHORT).show();
                 }
@@ -224,7 +224,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 runOnUiThread(() -> {
-                    Toast.makeText(MapActivity.this, "讀取好友資料失敗：" + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(com.example.bottom_main.MapActivity.this, "讀取好友資料失敗：" + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                 });
             }
         });
